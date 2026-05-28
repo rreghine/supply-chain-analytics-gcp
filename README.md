@@ -6,7 +6,7 @@
 ![Python](https://img.shields.io/badge/Python-3.10-blue?style=flat-square)
 ![Status](https://img.shields.io/badge/Status-Complete-brightgreen?style=flat-square)
 
-Pipeline analítico end-to-end de Supply Chain com arquitetura Medallion (Bronze → Silver → Gold) no BigQuery, modelagem dimensional com dbt e dashboard executivo no Looker Studio — construído sobre o dataset público TheLook Ecommerce do Google.
+Pipeline analítico end-to-end de Supply Chain com arquitetura Medallion (Staging → Intermediate → Marts) no BigQuery, modelagem dimensional com dbt Core — incluindo testes de qualidade, lineage completo e documentação — dashboard executivo em 3 camadas no Looker Studio e AI Insights gerados pelo Gemini Cloud Assist. Construído sobre o dataset público TheLook Ecommerce do Google Cloud.
 
 ---
 
