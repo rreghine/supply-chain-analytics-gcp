@@ -155,31 +155,6 @@ dbt test — PASS=15 ERROR=0
 
 ---
 
-## Como Executar
-
-```bash
-# 1. Clone o repositório
-git clone https://github.com/rreghine/supply-chain-analytics-gcp.git
-cd supply-chain-analytics-gcp/supply_chain_analytics
-
-# 2. Configure as credenciais GCP
-gcloud auth application-default login
-
-# 3. Instale as dependências dbt
-pip install dbt-bigquery
-
-# 4. Execute os modelos
-dbt run
-
-# 5. Execute os testes
-dbt test
-
-# 6. Gere a documentação
-dbt docs generate && dbt docs serve
-```
-
----
-
 ## Autor
 
 **Rafael Reghine Munhoz**  
