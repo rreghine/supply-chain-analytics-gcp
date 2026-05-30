@@ -1,7 +1,9 @@
-logs/ 
-*.log 
-profiles.yml 
-.env 
-__pycache__/ 
-target/ 
-dbt_packages/ 
+logs/
+*.log
+profiles.yml
+target/
+dbt_packages/
+__pycache__/
+.env
+*.pyc
+agent/__pycache__/
