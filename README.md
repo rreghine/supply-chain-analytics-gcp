@@ -3,14 +3,33 @@
 ![dbt](https://img.shields.io/badge/dbt-Core-orange?style=flat-square)
 ![BigQuery](https://img.shields.io/badge/BigQuery-GCP-blue?style=flat-square)
 ![Looker](https://img.shields.io/badge/Looker_Studio-Dashboard-brightgreen?style=flat-square)
+![Vertex AI](https://img.shields.io/badge/Vertex_AI-Gemini_2.5_Flash-4285F4?style=flat-square)
+![Cloud Run](https://img.shields.io/badge/Cloud_Run-Deployed-success?style=flat-square)
 ![Python](https://img.shields.io/badge/Python-3.10-blue?style=flat-square)
 ![Status](https://img.shields.io/badge/Status-Complete-brightgreen?style=flat-square)
 
-Pipeline analítico end-to-end de Supply Chain com arquitetura Medallion (Staging → Intermediate → Marts) no BigQuery, modelagem dimensional com dbt Core — incluindo testes de qualidade, lineage completo e documentação — dashboard executivo em 3 camadas no Looker Studio e AI Insights gerados pelo Gemini Cloud Assist. Construído sobre o dataset público TheLook Ecommerce do Google Cloud.
+Pipeline analítico end-to-end de Supply Chain com arquitetura Medallion (Staging → Intermediate → Marts) no BigQuery, modelagem dimensional com dbt Core — incluindo testes de qualidade, lineage completo e documentação — dashboard executivo em 3 camadas no Looker Studio e agente conversacional com IA deployado no Cloud Run via Vertex AI (Gemini 2.5 Flash + Claude Opus 4.8). Construído sobre o dataset público TheLook Ecommerce do Google Cloud.
 
 ---
 
-## Preview
+## AI Agent — Cloud Run
+
+Agente conversacional deployado no Google Cloud Run com suporte a múltiplos modelos de IA:
+
+**URL:** https://supply-chain-agent-477701258832.us-central1.run.app
+
+![Supply Chain AI Agent](docs/streamlit_agent.png)
+
+### Modelos disponíveis no agente
+
+| Modelo | Provider | Uso |
+|---|---|---|
+| **Gemini 2.5 Flash** | Google Vertex AI | Análise rápida de KPIs |
+| **Claude Opus 4.8** | Anthropic via Vertex AI | Análise aprofundada |
+
+---
+
+## Dashboard — Looker Studio
 
 ### Operational Performance
 ![Operational Performance](docs/page1_operational.png)
@@ -30,9 +49,10 @@ Operações de Supply Chain geram grandes volumes de dados — pedidos, entregas
 **Perguntas centrais respondidas:**
 
 - Qual o On-Time Delivery Rate da operação?
-- Quais países têm o maior lead time — e maior receita?
+- Quais países têm o maior lead time e maior receita?
 - Quais categorias e marcas concentram o faturamento?
 - Como o volume de pedidos evolui ao longo do tempo?
+- Quais são os principais gargalos operacionais? (via AI Agent)
 
 ---
 
@@ -42,7 +62,7 @@ Operações de Supply Chain geram grandes volumes de dados — pedidos, entregas
 
 - Dataset público do Google com dados simulados de e-commerce
 - Tabelas: `orders`, `order_items`, `products`, `users`, `inventory_items`, `distribution_centers`
-- Escala: ~30.000 pedidos, 13 países, receita total de R$ 2,67M
+- Escala: ~31.000 pedidos, 13 países, receita total de R$ 2,69M
 
 ---
 
@@ -56,16 +76,56 @@ Staging Layer — limpeza e padronização das fontes
   stg_users · stg_inventory · stg_distribution_centers
         ↓
 Intermediate Layer — joins e regras de negócio
-  int_orders_enriched · int_order_items_enriched
+  int_orders_enriched · int_order_logistics
         ↓
 Marts Layer — modelos analíticos finais
   fct_orders · fct_order_items · kpis_supply_chain
         ↓
-Looker Studio — Dashboard Executivo (3 páginas)
+┌─────────────────────┬──────────────────────────┐
+│  Looker Studio      │  AI Agent (Cloud Run)    │
+│  3 páginas          │  Streamlit + Vertex AI   │
+│  Dashboard executivo│  Gemini 2.5 Flash        │
+│                     │  Claude Opus 4.8         │
+└─────────────────────┴──────────────────────────┘
 ```
 
 ### Lineage Graph
 ![Lineage Graph](docs/lineage_graph.png)
+
+---
+
+## Requisitos da Vaga — Mapeamento
+
+| Requisito | Implementação | Status |
+|---|---|---|
+| dbt — modelos, testes, docs, lineage | 11 modelos, 15 testes PASS, lineage documentado | ✅ |
+| BigQuery — SQL avançado, CTEs | Todos os modelos usam CTEs e window functions | ✅ |
+| Modelagem dimensional (Medallion) | Staging → Intermediate → Marts | ✅ |
+| Contratos de dados entre camadas | _sources.yml + _schema.yml com testes | ✅ |
+| Particionamento + Clustering BigQuery | Arquitetura preparada por created_at | ✅ |
+| Materialização (views, tables) | Configurado por camada no dbt_project.yml | ✅ |
+| Monitoramento e alertas | dbt tests com severity configurado | ✅ |
+| Git + versionamento | GitHub público com commits organizados | ✅ |
+| Looker Studio | 3 páginas com KPIs, mapas e gráficos | ✅ |
+| KPIs de Supply Chain | On-Time Delivery, Lead Time, Revenue, Fill Rate | ✅ |
+| Python | gemini_agent.py + streamlit_app.py | ✅ |
+| Cloud Run — deploy em produção | App deployado com URL pública | ✅ |
+| Vertex AI — GenAI aplicado | Gemini 2.5 Flash + Claude Opus 4.8 | ✅ |
+| Agente conversacional | Chat em linguagem natural sobre os KPIs | ✅ |
+| Análise de Produtos | fct_order_items com category, brand, department | ✅ |
+| Autonomia e entrega end-to-end | Projeto completo do zero ao deploy em produção | ✅ |
+
+---
+
+## KPIs — Supply Chain
+
+| Métrica | Valor | Descrição |
+|---|---|---|
+| **Total de Pedidos** | 31.356 | Volume total da operação |
+| **Receita Total** | R$ 2.697.468 | Faturamento consolidado |
+| **On-Time Delivery Rate** | 69,77% | % pedidos entregues no prazo |
+| **Lead Time Médio** | 3,5 dias | Tempo médio entre pedido e entrega |
+| **Ticket Médio** | R$ 86,03 | Valor médio por pedido |
 
 ---
 
@@ -74,9 +134,9 @@ Looker Studio — Dashboard Executivo (3 páginas)
 ```
 supply-chain-analytics-gcp/
 │
-├── supply_chain_analytics/
+├── supply_chain_analytics/          ← dbt project
 │   ├── models/
-│   │   ├── staging/
+│   │   ├── staging/                 ← Bronze/Silver
 │   │   │   ├── _sources.yml
 │   │   │   ├── _schema.yml
 │   │   │   ├── stg_orders.sql
@@ -85,45 +145,30 @@ supply-chain-analytics-gcp/
 │   │   │   ├── stg_users.sql
 │   │   │   ├── stg_inventory_items.sql
 │   │   │   └── stg_distribution_centers.sql
-│   │   ├── intermediate/
+│   │   ├── intermediate/            ← Business logic
 │   │   │   ├── int_orders_enriched.sql
-│   │   │   └── int_order_items_enriched.sql
-│   │   └── marts/
+│   │   │   └── int_order_logistics.sql
+│   │   └── marts/                   ← Gold
 │   │       ├── fct_orders.sql
 │   │       ├── fct_order_items.sql
 │   │       └── kpis_supply_chain.sql
-│   ├── dbt_project.yml
-│   └── profiles.yml
-├── docs/
+│   └── dbt_project.yml
+│
+├── agent/                           ← AI Agent
+│   ├── streamlit_app.py             ← Interface
+│   ├── gemini_agent.py              ← BigQuery + Vertex AI
+│   ├── Dockerfile                   ← Cloud Run
+│   └── requirements.txt
+│
+├── docs/                            ← Screenshots
 │   ├── page1_operational.png
 │   ├── page2_geographic.png
-│   └── page3_product.png
+│   ├── page3_product.png
+│   ├── streamlit_agent.png
+│   └── lineage_graph.png
+│
 └── README.md
 ```
-
----
-
-## KPIs — Supply Chain
-
-| Métrica | Valor | Descrição |
-|---|---|---|
-| **Total de Pedidos** | 30.960 | Volume total da operação |
-| **Receita Total** | R$ 2.673.584,52 | Faturamento consolidado |
-| **On-Time Delivery Rate** | 69,63% | % pedidos entregues no prazo |
-| **Lead Time Médio** | 3,5 dias | Tempo médio entre pedido e entrega |
-
----
-
-## Dashboard — 3 Páginas
-
-### Pág 1 · Operational Performance
-Visão temporal da operação — evolução de pedidos por mês, distribuição de Lead Time vs Receita por país, volume de pedidos por país e tabela consolidada de performance.
-
-### Pág 2 · Geographic Performance
-Mapa geográfico de receita por país, ranking de países por faturamento e tabela com pedidos, receita e lead time médio por região.
-
-### Pág 3 · Product Analysis
-Receita por categoria, receita por marca e treemap de distribuição geográfica — identificando os produtos e marcas que concentram o faturamento.
 
 ---
 
@@ -141,6 +186,37 @@ dbt test — PASS=15 ERROR=0
 
 ---
 
+## Como Executar
+
+```bash
+# 1. Clone o repositório
+git clone https://github.com/rreghine/supply-chain-analytics-gcp.git
+cd supply-chain-analytics-gcp
+
+# 2. Configure as credenciais GCP
+gcloud auth application-default login
+gcloud config set project <seu-projeto>
+
+# 3. Execute os modelos dbt
+cd supply_chain_analytics
+dbt run
+dbt test
+
+# 4. Rode o AI Agent localmente
+cd ../agent
+pip install -r requirements.txt
+streamlit run streamlit_app.py
+
+# 5. Deploy no Cloud Run
+gcloud run deploy supply-chain-agent \
+  --source . \
+  --region us-central1 \
+  --allow-unauthenticated \
+  --memory 1Gi
+```
+
+---
+
 ## Tecnologias Utilizadas
 
 | Categoria | Ferramentas |
@@ -149,6 +225,9 @@ dbt test — PASS=15 ERROR=0
 | Data Warehouse | BigQuery |
 | Transformação | dbt Core 1.11 |
 | Visualização | Looker Studio |
+| AI Agent | Vertex AI · Gemini 2.5 Flash · Claude Opus 4.8 |
+| App Framework | Streamlit · Plotly |
+| Deploy | Cloud Run (serverless) |
 | Linguagem | SQL · Python |
 | Versionamento | Git · GitHub |
 | Dataset | TheLook Ecommerce (BigQuery Public Data) |
@@ -157,7 +236,7 @@ dbt test — PASS=15 ERROR=0
 
 ## Autor
 
-**Rafael Reghine Munhoz**  
+**Rafael Reghine Munhoz**
 Analytics Engineer | Data Science & Analytics | MBA USP
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-rafaelreghine-blue?style=flat-square&logo=linkedin)](https://linkedin.com/in/rafaelreghine)
