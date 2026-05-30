@@ -1,0 +1,7 @@
+google-cloud-bigquery
+vertexai
+pandas
+db-dtypes
+streamlit
+plotly
+anthropic[vertex]
